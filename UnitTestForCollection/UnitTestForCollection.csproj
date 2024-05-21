@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\lab13\lab13.csproj" />
+  </ItemGroup>
+
+    <ItemGroup>
+	    <Reference Include="BalancedTree and AVLTree">
+		    <HintPath>..\..\12-vlpogudin\MyCollectionAVLTree\bin\Debug\net8.0\BalancedTree and AVLTree.dll</HintPath>
+	    </Reference>
+	    <Reference Include="GameLib">
+		    <HintPath>..\..\11-vlpogudin\lab\bin\Debug\net7.0\GameLib.dll</HintPath>
+	    </Reference>
+	    <Reference Include="GameLib">
+		    <HintPath>..\..\12-vlpogudin\MyCollectionAVLTree\bin\Debug\net8.0\MyCollectionAVLTree.dll</HintPath>
+	    </Reference>
+    </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+</Project>

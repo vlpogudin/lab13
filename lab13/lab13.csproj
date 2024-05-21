@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="BalancedTree and AVLTree">
+      <HintPath>..\..\12-vlpogudin\MyCollectionAVLTree\bin\Debug\net8.0\BalancedTree and AVLTree.dll</HintPath>
+    </Reference>
+    <Reference Include="GameLib">
+      <HintPath>..\..\11-vlpogudin\lab\bin\Debug\net7.0\GameLib.dll</HintPath>
+    </Reference>
+	<Reference Include="GameLib">
+      <HintPath>..\..\12-vlpogudin\MyCollectionAVLTree\bin\Debug\net8.0\MyCollectionAVLTree.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+
+</Project>
