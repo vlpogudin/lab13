@@ -10,10 +10,12 @@ namespace lab13
             MyObservableCollection<Game> col2 = new MyObservableCollection<Game>("Вторая коллекция", 7); // Создание второй коллекции
             Journal jour1 = new Journal(); // Создание первого журнала записей
             Journal jour2 = new Journal(); // Создание второго журнала записей
+
             col1.CollectionCountChanged += jour1.WriteRecord; // Подписка на событие для первой коллекции первого журнала
             col1.CollectionReferenceChanged += jour1.WriteRecord; // Подписка на событие для первой коллекции первого журнала
             col1.CollectionReferenceChanged += jour2.WriteRecord; // Подписка на событие для первой коллекции второго журнала
             col2.CollectionReferenceChanged += jour2.WriteRecord; // Подписка на событие для второй коллекции второго журнала
+
             int answer; // Переменная выбора пункта меню
             do
             {
@@ -43,10 +45,15 @@ namespace lab13
 
                     case 5:
                         Console.Clear();
-                        PrintJournals(jour1, jour2); // Печать журналов на экран
+                        ClearCollection(col1, col2); // Очистка коллекции
                         break;
 
                     case 6:
+                        Console.Clear();
+                        PrintJournals(jour1, jour2); // Печать журналов на экран
+                        break;
+
+                    case 7:
                         Console.Clear();
                         int exitAnswer; /* Переменная, отвечающая за выбор
                                            пользователем пункта выходного меню */
@@ -92,15 +99,17 @@ namespace lab13
             int answerSelectCol = UI.SelectCollection(); // Выбор номера коллекции
             if (answerSelectCol == 1) // Выбрана первая коллекция
             { 
-                Console.Clear(); 
-                Console.WriteLine("Печать коллекции 1 по уровням:\n"); 
+                Console.Clear();
+                if (col1.Root != null) // Если дерево содержит элементы
+                    Console.WriteLine("Печать коллекции 1 по уровням:\n"); 
                 col1.Print(); // Печать первой коллекции
                 Console.WriteLine(); 
             }
             else if (answerSelectCol == 2) // Выбрана вторая коллекция
             {
                 Console.Clear();
-                Console.WriteLine("Печать коллекции 2 по уровням:\n");
+                if (col2.Root != null) // Если дерево содержит элементы
+                    Console.WriteLine("Печать коллекции 2 по уровням:\n");
                 col2.Print(); // Печать второй коллекции
                 Console.WriteLine();
             }
@@ -141,7 +150,7 @@ namespace lab13
             {
                 col.Add(newItem); // Добавление элемента в коллекцию
                 Console.Clear();
-                Console.WriteLine($"Элемент {newItem} добавлен в коллекцию.\n");
+                Console.WriteLine($"Элемент \"{newItem}\" добавлен в коллекцию.\n");
             }
         }
 
@@ -176,7 +185,7 @@ namespace lab13
             deleteItem.Init(); // Заполнение элемента вручную
             bool result = col.Remove(deleteItem); // Удаление элемента из коллекции
             Console.Clear();
-            if (result) { Console.WriteLine($"Элемент {deleteItem} удален из коллекции.\n"); } // Если удаление успешно
+            if (result) { Console.WriteLine($"Элемент \"{deleteItem}\" удален из коллекции.\n"); } // Если удаление успешно
             else { Console.WriteLine("Элемент не был удален из коллекции.\n"); } // Если удаление неуспешно
         }
 
@@ -205,21 +214,48 @@ namespace lab13
         /// <param name="col">Коллекция для изменения значения элемента</param>
         static void EditItemInSomeCollection(MyObservableCollection<Game> col)
         {
-            if (col.Root == null) { Console.WriteLine("Дерево пусто. Невозможно осуществить изменение элемента.\n"); return; } // Если дерево пусто, выход из метода
-            Console.WriteLine("\nВведите элемент для изменения: ");
-            Game editItem = new Game(); // Создание нового элемента
-            editItem.Init(); // Заполнение элемента вручную
-            bool result = col.Contains(editItem); // Проверка, существует ли такой элемент в коллекции
-            if (result)
+            try
             {
-                Console.WriteLine("\nВведите новое информационное поле элемента: ");
-                Game newItem = new Game(); // Создание нового элемента
-                newItem.Init(); // Заполнение элемента вручную
-                col[editItem] = newItem; // Изменение значения элемента
-                Console.Clear();
-                Console.WriteLine($"Информационное поле элемента было изменено на {newItem}.\n");
+                if (col.Root == null) { Console.WriteLine("Дерево пусто. Невозможно осуществить изменение элемента.\n"); return; } // Если дерево пусто, выход из метода
+                Console.WriteLine("\nВведите элемент для изменения: ");
+                Game editItem = new Game(); // Создание нового элемента
+                editItem.Init(); // Заполнение элемента вручную
+                bool result = col.Contains(editItem); // Проверка, существует ли такой элемент в коллекции
+                if (result)
+                {
+                    Console.WriteLine("\nВведите новое информационное поле элемента: ");
+                    Game newItem = new Game(); // Создание нового элемента
+                    newItem.Init(); // Заполнение элемента вручную
+                    col[editItem] = newItem; // Изменение значения элемента
+                    Console.Clear();
+                    Console.WriteLine($"Информационное поле элемента было изменено на \"{newItem}\".\n");
+                }
+                else { Console.Clear(); Console.WriteLine("Элемента с таким информационным полем не найдено в коллекции.\n"); }
             }
-            else { Console.Clear();  Console.WriteLine("Элемента с таким информационным полем не найдено в коллекции.\n"); }
+            catch (Exception ex) { Console.Clear(); Console.WriteLine($"Ошибка! {ex.Message}\n"); } // Сообщаем об ошибке
+        }
+
+        /// <summary>
+        /// Очистка коллекции
+        /// </summary>
+        /// <param name="col1">Первая коллекция</param>
+        /// <param name="col2">Вторая коллекция</param>
+        static void ClearCollection(MyObservableCollection<Game> col1, MyObservableCollection<Game> col2)
+        {
+            int answerSelectCol = UI.SelectCollection(); // Выбор номера коллекции
+            if (answerSelectCol == 1) // Выбрана первая коллекция
+            {
+                col1.Clear(); // Вызов метода очистки для первой коллекции
+                Console.Clear();
+                Console.WriteLine("Первая коллекция была очищена.\n");
+            }
+            else if (answerSelectCol == 2) // Выбрана вторая коллекция
+            {
+                col2.Clear(); // Вызов метода очистки для второй коллекции
+                Console.Clear();
+                Console.WriteLine("Вторая коллекция была очищена.\n");
+            }
+            else { Console.Clear(); } // Выход из метода
         }
 
         /// <summary>
@@ -229,11 +265,11 @@ namespace lab13
         /// <param name="journal2">Второй журнал событий</param>
         static void PrintJournals(Journal journal1, Journal journal2)
         {
-            Console.WriteLine("Печать первого журнала: ");
+            Console.WriteLine("Печать первого журнала (все события первой коллекции): ");
             journal1.PrintJournal(); // Печать первого журнала
             Console.WriteLine();
 
-            Console.WriteLine("Печать второго журнала: ");
+            Console.WriteLine("Печать второго журнала (изменение ссылок обеих коллекций): ");
             journal2.PrintJournal(); // Печать второго журнала
             Console.WriteLine();
         } 

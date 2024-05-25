@@ -1,5 +1,6 @@
 ﻿using MyCollectionAVLTree;
 using GameLib;
+using BalancedTree;
 
 namespace lab13
 {
@@ -33,6 +34,11 @@ namespace lab13
         /// Название коллекции
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Количество элементов коллекции
+        /// </summary>
+        private int Length => base.Count; // Вычисление количества элементов коллекции
         #endregion
 
         #region Конструкторы
@@ -52,7 +58,7 @@ namespace lab13
         /// Добавление элемента в коллекцию
         /// </summary>
         /// <param name="item">Элемент для добавления в коллекцию</param>
-        public void Add(T item)
+        public new void Add(T item)
         {
             base.Add(item); // Вызов метода добавления элемента из базового класса
             OnCollectionCountChanged(this, new CollectionHandlerEventArgs("Добавление", item)); // Обработка события
@@ -62,7 +68,7 @@ namespace lab13
         /// Удаление элемента из коллекции
         /// </summary>
         /// <param name="item">Элемент для удаления из коллекции</param>
-        public bool Remove(T item)
+        public new bool Remove(T item)
         {
             bool result = base.Remove(item); // Вызов метода удаления элемента из базового класса
             if (result) { OnCollectionCountChanged(this, new CollectionHandlerEventArgs("Удаление", item)); } // Обработка события
@@ -70,23 +76,51 @@ namespace lab13
         }
 
         /// <summary>
+        /// Очистка коллекции
+        /// </summary>
+        public new void Clear()
+        {
+            ClearNode(root); // Вызов метода очистки дерева из базового класса
+            root = null; // Очистка корня дерева
+        }
+
+        /// <summary>
         /// Индексатор изменения элемента коллекции
         /// </summary>
-        /// <param name="oldData">Информационное поле для обновления значения</param>
+        /// <param name="key">Информационное поле для обновления значения</param>
         /// <returns>Обновленное значение элемента</returns>
-        public T this[T oldData]
+        public T this[T key]
         {
+            get
+            {
+                if (!Contains(key))
+                {
+                    throw new InvalidOperationException("Элемент с заданным значением не найден."); // Выкидываем исключение
+                }
+                else
+                {
+                    return key; // Получение переданного элемента
+                }
+            }
+
             set
             {
-                if (!Contains(oldData)) // Если элемент с переданным значением не найден
+                if (!Contains(key)) // Если элемент с переданным значением не найден
                 {
-                    throw new InvalidOperationException("Элемент с заданным значением не найден.\n"); // Выкидываем исключение
+                    throw new InvalidOperationException("Элемент с заданным значением не найден."); // Выкидываем исключение
                 }
                 else // Если элемент с переданным значением найден
                 {
-                    Remove(oldData); // Удаляем элемент с заданным значением
-                    Add(value); // Добавляем элемент с новым значением
-                    OnCollectionReferenceChanged(this, new CollectionHandlerEventArgs("Изменение значения", oldData)); // Обработка события
+                    if (Contains(value)) // Если новое значение элемента уже существует в коллекции
+                    {
+                        throw new InvalidOperationException("Элемент с заданным значением уже существует в коллекции."); // Выкидываем исключение
+                    }
+                    else
+                    {
+                        Remove(key); // Удаляем элемент с заданным значением
+                        Add(value); // Добавляем элемент с новым значением
+                        OnCollectionReferenceChanged(this, new CollectionHandlerEventArgs("Изменение значения", key)); // Обработка события
+                    }
                 }
             }
         }
@@ -109,6 +143,23 @@ namespace lab13
         public virtual void OnCollectionReferenceChanged(object source, CollectionHandlerEventArgs args)
         {
             CollectionReferenceChanged?.Invoke(source, args); // Выполнение делегата
+        }
+
+        /// <summary>
+        /// Рекурсивная очистка корней коллекции
+        /// </summary>
+        /// <param name="node">Узел для очистки элементов</param>
+        private void ClearNode(AVLTreeItem<T>? node)
+        {
+            if (node != null) // Если узел не пуст
+            {
+                OnCollectionCountChanged(this, new CollectionHandlerEventArgs("Удаление", node.Data)); // Обработка события
+                ClearNode(node.Left); // Рекурсивная очистка из левого поддерева
+                node.Data = default(T); // Обнуление информационного поля узла
+                ClearNode(node.Right); // Рекурсивная очистка из правого поддерева
+                node.Left = null; // Обнуление ссылки на левое поддерево
+                node.Right = null; // Обнуление ссылки на правое поддерево
+            }
         }
         #endregion
     }

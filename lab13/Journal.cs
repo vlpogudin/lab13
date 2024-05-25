@@ -1,4 +1,5 @@
 ﻿using GameLib;
+using System.Diagnostics.CodeAnalysis;
 
 namespace lab13
 {
@@ -21,9 +22,10 @@ namespace lab13
         /// <param name="entry"></param>
         public void WriteRecord(object source, CollectionHandlerEventArgs args)
         {
-            journal.Add(new JournalEntry(((MyObservableCollection<Game>)source).Name,args.Action, args.Item.ToString())); // Добавление записи в журнал
+            journal.Add(new JournalEntry(((MyObservableCollection<Game>)source).Name, args.Action, args.Item.ToString())); // Добавление записи в журнал
         }
 
+        [ExcludeFromCodeCoverage]
         /// <summary>
         /// Печать журнала на экран
         /// </summary>
